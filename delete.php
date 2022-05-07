@@ -7,11 +7,11 @@ if(isset($_SESSION['user'])){
 
     $success = '<p class="success">Votre compte a bien été supprimé !</p>';
 
-    // unset($_SESSION['user']);
-
     $delete = $db->prepare("DELETE FROM users WHERE email = ?");
 
     $delete->execute([$_SESSION['user']['email']]);
+
+    unset($_SESSION['user']);
 
 } else{
 
