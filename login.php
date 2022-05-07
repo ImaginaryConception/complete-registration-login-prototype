@@ -62,7 +62,7 @@ if(isset($_POST['email']) && isset($_POST['password'])){
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion</title>
-    <?php include __DIR__ .'/css/include-css.php'; ?>
+    <?php include __DIR__ .'/includes/include-link.php'; ?>
 </head>
 <body>
     <?php include __DIR__ . '/includes/navbar.php'; ?>
@@ -100,6 +100,6 @@ if(isset($_POST['email']) && isset($_POST['password'])){
         }
 
     ?>
-
+    <?php include __DIR__ . '/includes/translate.php'; ?>
 </body>
 </html>
