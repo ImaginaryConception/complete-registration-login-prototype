@@ -3,7 +3,13 @@ session_start();
 
 require __DIR__ . '/includes/db-connection.php';
 
-if(isset($_POST['email']) && isset($_POST['password'])){
+if(isset($_POST['email']) && isset($_POST['password']) && isset($_POST['username'])){
+
+    if(mb_strlen($_POST['username']) < 5 || mb_strlen($_POST['username']) > 50){
+
+        $errors[] = '<p class="error">Votre nom d\'utilisateur doit contenir entre 5 et 50 caractères !</p>';
+
+    }
 
     if(!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
 
@@ -19,9 +25,15 @@ if(isset($_POST['email']) && isset($_POST['password'])){
 
     if(!isset($errors)){
 
+        $username = $db->prepare("SELECT * FROM users WHERE username=?");
+
+        $username->execute([$_POST['username']]);
+
         $userInfo = $db->prepare("SELECT * FROM users WHERE email=?");
 
         $userInfo->execute([$_POST['email']]);
+
+        $emailUser = $username->fetch();
 
         $user = $userInfo->fetch();
 
@@ -29,12 +41,32 @@ if(isset($_POST['email']) && isset($_POST['password'])){
 
             if(password_verify($_POST['password'], $user['password'])){
 
-                $success = '<p class="success">Vous êtes bien connecté !</p>';
+                if(isset($_SESSION['user'])){
 
-                $_SESSION['user'] = [
-                    'email' => $_POST['email'],
-                    'password' => $_POST['password'],
-                ];
+                    $errors[] = '<p class="error">Vous êtes déjà connecté !</p>';
+
+                } else{
+
+                    if($emailUser){
+
+                        $success = '<p class="success">Vous êtes bien connecté !</p>';
+
+                        $_SESSION['user'] = [
+                            'email' => $_POST['email'],
+                            'password' => $_POST['password'],
+                            'username' => $_POST['username'],
+                        ];
+
+                        $username->closeCursor();
+
+
+                    } else{
+
+                        $errors[] = '<p class="error">Votre nom d\'utilisateur est incorrecte !</p>';
+
+                    }
+
+                }
 
             } else{
 
@@ -70,6 +102,9 @@ if(isset($_POST['email']) && isset($_POST['password'])){
 
     <!-- Formulaire de connexion -->
     <form action="login.php" method="POST">
+
+        <label for="username">Votre nom d'utilisateur :</label>
+        <input type="text" placeholder="Nom d'utilisateur" name="username" id="username">
 
         <label for="email">Votre e-mail :</label>
         <input type="text" placeholder="E-mail" name="email" id="email">

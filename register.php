@@ -31,27 +31,59 @@ if(isset($_POST['username']) && isset($_POST['email']) && isset($_POST['password
 
     if(!isset($errors)){
 
-        $createUser = $db->prepare('INSERT INTO users(username, email, password) VALUES(?, ?, ?)');
+        $verifEmail = $db->prepare('SELECT * FROM users WHERE email = ?');
 
-        $insertNewUser = $createUser->execute([
+        $emailIsUsed = $verifEmail->execute([$_POST['email']]);
 
-            $_POST['username'],
-            $_POST['email'],
-            password_hash($_POST['password'], PASSWORD_BCRYPT),
+        $user = $verifEmail->fetch();
 
-        ]);
+        if($user){
 
-        if($insertNewUser){
-
-            $success = '<p class="success">Votre compte a bien été créé !</p>';
+            $errors[] = '<p class="error">Cette adresse e-mail a déjà été utilisée !</p>';
 
         } else{
 
-            $errors[] = '<p class="error">Erreur interne, veuillez réessayer !</p>';
+            $userInfo = $db->prepare("SELECT * FROM users WHERE username=?");
+
+            $userInfo->execute([$_POST['username']]);
+
+            $user = $userInfo->fetch();
+
+            if($user){
+
+                $errors[]  = '<p class="error">Ce nom d\'utilisateur a déjà été utilisée !</p>';
+
+            } else{
+
+                $createUser = $db->prepare('INSERT INTO users(username, email, password) VALUES(?, ?, ?)');
+
+                $insertNewUser = $createUser->execute([
+
+                    $_POST['username'],
+                    $_POST['email'],
+                    password_hash($_POST['password'], PASSWORD_BCRYPT),
+
+                ]);
+
+                if($insertNewUser){
+
+                    $success = '<p class="success">Votre compte a bien été créé !</p>';
+
+                } else{
+
+                    $errors[] = '<p class="error">Erreur interne, veuillez réessayer !</p>';
+
+                }
+
+            $createUser->closeCursor();
+
+
+            }
+
 
         }
 
-        $createUser->closeCursor();
+        $verifEmail->closeCursor();
 
     }
 

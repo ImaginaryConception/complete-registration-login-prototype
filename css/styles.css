@@ -1,4 +1,8 @@
 
+body{
+    font-family: sans-serif;
+}
+
 .error{
     color: red;
 }
@@ -94,6 +98,11 @@ p{
     margin-top: 50px;
 }
 
-.active{
-    color: grey;
+.new-input, .new-submit{
+    display: block;
+    margin: auto;
+}
+
+.new-submit{
+    margin-top: 20px;
 }
