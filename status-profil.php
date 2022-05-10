@@ -41,6 +41,10 @@ if(isset($_POST['email'])){
 
             $email->execute([$_POST['email']]);
 
+            $_SESSION['user'] = [
+                'email' => $_POST['email'],
+            ];
+
         }
 
     }
@@ -134,21 +138,21 @@ if(isset($_POST['password'])){
 
         <hr>
 
-        <p><strong>E-mail</strong> : <?php echo $_SESSION['user']['email'] ?></p>
+        <p><strong>E-mail</strong> : <?php if(isset($_SESSION['user']['email'])){echo $_SESSION['user']['email'];} ?></p>
         <form action="status-profil.php" method="POST">
             <input class="new-input" type="text" placeholder="Nouvelle adresse e-mail" name="email">
             <input class="new-submit" type="submit" value="Confirmer">
         </form>
 
-        <p><strong>Nom d'utilisateur</strong> : <?php echo $_SESSION['user']['username'] ?></p>
+        <p><strong>Nom d'utilisateur</strong> : <?php if(isset($_SESSION['user']['username'])){echo $_SESSION['user']['username'];} ?></p>
         <form action="status-profil.php" method="POST">
             <input class="new-input" type="text" placeholder="Nouveau nom d'utilisateur" name="username">
             <input class="new-submit" type="submit" value="Confirmer">
         </form>
 
-        <p><strong>Mot de passe</strong> : <?php echo $_SESSION['user']['password'] ?></p>
+        <p><strong>Mot de passe</strong> : <?php if(isset($_SESSION['user']['password'])){echo $_SESSION['user']['password'];} ?></p>
         <form action="status-profil.php" method="POST">
-            <input class="new-input" type="text" placeholder="Nouveau mot de passe" name="password">
+            <input class="new-input" type="password" placeholder="Nouveau mot de passe" name="password">
             <input class="new-submit" type="submit" value="Confirmer">
         </form>
 
